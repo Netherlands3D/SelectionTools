@@ -37,73 +37,73 @@ namespace Netherlands3D.SelectionTools
         }
 
         [Header("Input")]
-        [SerializeField] private InputActionAsset inputActionAsset;
-        private InputActionMap polygonSelectionActionMap;
+        [SerializeField] protected InputActionAsset inputActionAsset;
+        protected InputActionMap polygonSelectionActionMap;
 
         [Header("Settings")]
-        [SerializeField] Color lineColor = Color.red;
-        [SerializeField] Color closedLoopLineColor = Color.red;
-        [SerializeField] private float lineWidthMultiplier = 10.0f;
-        [SerializeField] private float maxSelectionDistanceFromCamera = 10000;
-        [SerializeField] private bool snapToStart = true;
-        [SerializeField, Tooltip("Closing a polygon shape is required. If set to false, you can output lines.")] private bool requireClosedPolygon = true;
-        [SerializeField, Tooltip("If you click close to the starting point the loop will finish")] private bool closeLoopAtStart = true;
-        [SerializeField, Tooltip("Handles allow you to transform the line.")] private bool createHandles = false;
-        [SerializeField] private int maxPoints = 1000;
-        [SerializeField] private int minPointsToCloseLoop = 3;
-        [SerializeField] private float minPointDistance = 0.1f;
-        [SerializeField] private float minDistanceBetweenAutoPoints = 10.0f;
-        [SerializeField] private float minDirectionThresholdForAutoPoints = 0.8f;
-        [SerializeField] private WindingOrder windingOrder = WindingOrder.CLOCKWISE;
-        [SerializeField] private bool doubleClickToCloseLoop = true;
-        [SerializeField] private float doubleClickTimer = 0.5f;
-        [SerializeField] private float doubleClickDistance = 10.0f;
-        [SerializeField] private bool displayLineUntilRedraw = true;
-        [SerializeField] private bool clearOnEnable = false;
-        [SerializeField] private LayerMask lockInputLayers = 32; //UI layer 5th bit is a 1
+        [SerializeField] protected Color lineColor = Color.red;
+        [SerializeField] protected Color closedLoopLineColor = Color.red;
+        [SerializeField] protected float lineWidthMultiplier = 10.0f;
+        [SerializeField] protected float maxSelectionDistanceFromCamera = 10000;
+        [SerializeField] protected bool snapToStart = true;
+        [SerializeField, Tooltip("Closing a polygon shape is required. If set to false, you can output lines.")] protected bool requireClosedPolygon = true;
+        [SerializeField, Tooltip("If you click close to the starting point the loop will finish")] protected bool closeLoopAtStartPoint = true;
+        [SerializeField, Tooltip("Handles allow you to transform the line.")] protected bool createHandles = false;
+        [SerializeField] protected int maxPoints = 1000;
+        [SerializeField] protected int minPointsToCloseLoop = 3;
+        [SerializeField] protected float minPointDistance = 0.1f;
+        [SerializeField] protected float minDistanceBetweenAutoPoints = 10.0f;
+        [SerializeField] protected float minDirectionThresholdForAutoPoints = 0.8f;
+        [SerializeField] protected WindingOrder windingOrder = WindingOrder.CLOCKWISE;
+        [SerializeField] protected bool doubleClickToCloseLoop = true;
+        [SerializeField] protected float doubleClickTimer = 0.5f;
+        [SerializeField] protected float doubleClickDistance = 10.0f;
+        [SerializeField] protected bool displayLineUntilRedraw = true;
+        [SerializeField] protected bool clearOnEnable = false;
+        [SerializeField] protected LayerMask lockInputLayers = 32; //UI layer 5th bit is a 1
 
-        private InputAction pointerAction;
-        private InputAction tapAction;
-        private InputAction escapeAction;
-        private InputAction finishAction;
-        private InputAction tapSecondaryAction;
-        private InputAction clickAction;
-        private InputAction modifierAction;
+        protected InputAction pointerAction;
+        protected InputAction tapAction;
+        protected InputAction escapeAction;
+        protected InputAction finishAction;
+        protected InputAction tapSecondaryAction;
+        protected InputAction clickAction;
+        protected InputAction modifierAction;
 
-        [SerializeField] private LineRenderer polygonLineRenderer;
-        [SerializeField] private LineRenderer previewLineRenderer;
-        private List<Vector3> positions = new List<Vector3>();
-        private Vector3 lastAddedPoint = default;
-        private Vector3 selectionStartPosition = default;
-        private Vector3 currentWorldCoordinate = default;
-        private Vector3 previousFrameWorldCoordinate = default;
-        private Vector2 previousFrameScreenCoordinate = default;
-        private Vector3 lastNormal = Vector3.zero;
-        private Plane worldPlane;
+        [SerializeField] protected LineRenderer polygonLineRenderer;
+        [SerializeField] protected LineRenderer previewLineRenderer;
+        protected List<Vector3> positions = new List<Vector3>();
+        protected Vector3 lastAddedPoint = default;
+        protected Vector3 selectionStartPosition = default;
+        protected Vector3 currentWorldCoordinate = default;
+        protected Vector3 previousFrameWorldCoordinate = default;
+        protected Vector2 previousFrameScreenCoordinate = default;
+        protected Vector3 lastNormal = Vector3.zero;
+        protected Plane worldPlane;
 
-        private bool closedLoop = false;
-        private bool snappingToStartPoint = false;
-        private bool polygonFinished = false;
-        private bool previewLineCrossed = false;
-        private bool autoDrawPolygon = false;
-        private bool requireReleaseBeforeRedraw = false;
-        private Camera mainCamera;
+        protected bool closedLoop = false;
+        protected bool snappingToStartPoint = false;
+        protected bool polygonFinished = false;
+        protected bool previewLineCrossed = false;
+        protected bool autoDrawPolygon = false;
+        protected bool requireReleaseBeforeRedraw = false;
+        protected Camera mainCamera;
 
-        private float lastTapTime = 0;
+        protected float lastTapTime = 0;
 
-        [SerializeField] private Transform pointerRepresentation;
-        [SerializeField] private PolygonDragHandle handleTemplate;
-        private List<PolygonDragHandle> handles = new List<PolygonDragHandle>();
+        [SerializeField] protected Transform pointerRepresentation;
+        [SerializeField] protected PolygonDragHandle handleTemplate;
+        protected List<PolygonDragHandle> handles = new List<PolygonDragHandle>();
 
         [Header("Invoke")]
-        [SerializeField] private UnityEvent<bool> blockCameraDrag;
-        [SerializeField] private UnityEvent<List<Vector3>> createdNewPolygonArea;
+        [SerializeField] protected UnityEvent<bool> blockCameraDrag;
+        [SerializeField] protected UnityEvent<List<Vector3>> createdNewPolygonArea;
         [Header("Optional Invoke")]
-        [SerializeField] private UnityEvent<List<Vector3>> editedPolygonArea;
-        [SerializeField, Tooltip("Contains the list of points the line is made of")] private UnityEvent<List<Vector3>> previewLineHasChanged;
+        [SerializeField] protected UnityEvent<List<Vector3>> editedPolygonArea;
+        [SerializeField, Tooltip("Contains the list of points the line is made of")] protected UnityEvent<List<Vector3>> previewLineHasChanged;
 
 
-        void Awake()
+        protected virtual void Awake()
         {
             mainCamera = Camera.main;
             polygonLineRenderer.startColor = polygonLineRenderer.endColor = lineColor;
@@ -133,7 +133,7 @@ namespace Netherlands3D.SelectionTools
         }
 
 #if UNITY_EDITOR
-        private void OnValidate()
+        protected virtual void OnValidate()
         {
             if (createHandles && doubleClickToCloseLoop)
             {
@@ -144,7 +144,7 @@ namespace Netherlands3D.SelectionTools
         }
 #endif
 
-        private void OnEnable()
+        protected virtual void OnEnable()
         {
             if (clearOnEnable)
             {
@@ -157,10 +157,10 @@ namespace Netherlands3D.SelectionTools
             escapeAction.canceled += EscapeAction_canceled;
             finishAction.performed += FinishAction_performed;
 
-            polygonSelectionActionMap.Enable();
+            polygonSelectionActionMap.Enable(); //make sure to look at the execution order in case there are multiple Scripts that make use of this ActionMap, OnDisable() of another object might be called after this function, resulting in no inputs being registered
         }
 
-        private void OnDisable()
+        protected virtual void OnDisable()
         {
             blockCameraDrag.Invoke(false);
 
@@ -173,32 +173,32 @@ namespace Netherlands3D.SelectionTools
             polygonSelectionActionMap.Disable();
         }
 
-        private void TapAction_performed(InputAction.CallbackContext obj)
+        protected void TapAction_performed(InputAction.CallbackContext obj)
         {
             Tap();
         }
 
-        private void ClickAction_performed(InputAction.CallbackContext obj)
+        protected void ClickAction_performed(InputAction.CallbackContext obj)
         {
             StartClick();
         }
 
-        private void ClickAction_canceled(InputAction.CallbackContext obj)
+        protected void ClickAction_canceled(InputAction.CallbackContext obj)
         {
             Release();
         }
 
-        private void EscapeAction_canceled(InputAction.CallbackContext obj)
+        protected void EscapeAction_canceled(InputAction.CallbackContext obj)
         {
             ClearPolygon(true);
         }
 
-        private void FinishAction_performed(InputAction.CallbackContext obj)
+        protected void FinishAction_performed(InputAction.CallbackContext obj)
         {
-            FinishPolygon(true);
+            CloseLoop(true);
         }
 
-        public void ReselectPolygon(List<Vector3> points)
+        public virtual void ReselectPolygon(List<Vector3> points)
         {
             ClearPolygon(true);
             for (int i = 0; i < points.Count; i++)
@@ -215,7 +215,7 @@ namespace Netherlands3D.SelectionTools
             CloseLoop(false);
         }
 
-        private void Update()
+        protected virtual void Update()
         {
             var currentPointerPosition = pointerAction.ReadValue<Vector2>();
             currentWorldCoordinate = Camera.main.GetCoordinateInWorld(currentPointerPosition, worldPlane, maxSelectionDistanceFromCamera);
@@ -248,7 +248,7 @@ namespace Netherlands3D.SelectionTools
         /// <summary>
         /// Draw the preview line between last placed point and current pointer position
         /// </summary>
-        private void UpdatePreviewLine()
+        protected virtual void UpdatePreviewLine()
         {
             if (positions.Count == 0 || closedLoop)
                 return;
@@ -291,7 +291,7 @@ namespace Netherlands3D.SelectionTools
         /// <summary>
         /// Automatically add a new point if our pointer position changed direction (based on threshold) on the 2D plane 
         /// </summary>
-        private void AutoAddPoint()
+        protected virtual void AutoAddPoint()
         {
             //Clear on fresh start
             if (polygonFinished) ClearPolygon(true);
@@ -315,7 +315,7 @@ namespace Netherlands3D.SelectionTools
             }
         }
 
-        private void CloseLoop(bool isNewPolygon, bool checkPreviewLine = true)
+        protected virtual void CloseLoop(bool isNewPolygon, bool checkPreviewLine = true)
         {
             if (closedLoop)
                 return;
@@ -352,17 +352,17 @@ namespace Netherlands3D.SelectionTools
                     }
                     else
                     {
+                        print("adding closing line end");
                         positions.Add(closingLineEnd);
                     }
                 }
             }
 
             closedLoop = true;
-
             FinishPolygon(isNewPolygon);
         }
 
-        private void Tap()
+        protected virtual void Tap()
         {
             var pointerRaycastResult = EventSystem.current.GetComponent<InputSystemUIInputModule>().GetLastRaycastResult(0);
 
@@ -390,7 +390,7 @@ namespace Netherlands3D.SelectionTools
             AddPoint(currentWorldCoordinate);
         }
 
-        private void ClearPolygon(bool redraw = false)
+        protected virtual void ClearPolygon(bool redraw = false)
         {
             polygonFinished = false;
             ClearHandles();
@@ -410,7 +410,7 @@ namespace Netherlands3D.SelectionTools
         /// <summary>
         /// Destroys all handle objects
         /// </summary>
-        private void ClearHandles()
+        protected virtual void ClearHandles()
         {
             foreach (var handle in handles)
             {
@@ -419,7 +419,7 @@ namespace Netherlands3D.SelectionTools
             handles.Clear();
         }
 
-        private void AddPoint(Vector3 pointPosition, bool isNewPolygon = true)
+        protected virtual void AddPoint(Vector3 pointPosition, bool isNewPolygon = true)
         {
             //Clear on fresh start
             if (polygonFinished) ClearPolygon(true);
@@ -454,7 +454,7 @@ namespace Netherlands3D.SelectionTools
                 lastAddedPoint = pointPosition;
                 if (positions.Count >= maxPoints)
                 {
-                    if (closeLoopAtStart)
+                    if (closeLoopAtStartPoint)
                     {
                         CloseLoop(isNewPolygon);
                     }
@@ -464,7 +464,7 @@ namespace Netherlands3D.SelectionTools
                     }
                 }
 
-                if (closeLoopAtStart && snappingToStartPoint)
+                if (closeLoopAtStartPoint && snappingToStartPoint)
                 {
                     CloseLoop(isNewPolygon);
                 }
@@ -477,7 +477,7 @@ namespace Netherlands3D.SelectionTools
         /// Create a drag handle for line vertex position with index for changing its position
         /// </summary>
         /// <param name="positionIndex">Line vertex position index</param>
-        private void CreateHandle(int positionIndex)
+        protected virtual void CreateHandle(int positionIndex)
         {
             var lineHandle = Instantiate(handleTemplate, this.transform);
             lineHandle.gameObject.SetActive(true);
@@ -520,7 +520,7 @@ namespace Netherlands3D.SelectionTools
             handles.Add(lineHandle);
         }
 
-        private bool HandleAttachedLinesCross(PolygonDragHandle dragHandle)
+        protected virtual bool HandleAttachedLinesCross(PolygonDragHandle dragHandle)
         {
             Vector3 lineOneA = Vector3.zero;
             Vector3 lineOneB = Vector3.zero;
@@ -548,7 +548,7 @@ namespace Netherlands3D.SelectionTools
             return false;
         }
 
-        private void MoveHandle(PolygonDragHandle handle, Vector3 targetPosition)
+        protected virtual void MoveHandle(PolygonDragHandle handle, Vector3 targetPosition)
         {
             handle.transform.position = targetPosition;
             positions[handle.pointIndex] = targetPosition;
@@ -559,7 +559,7 @@ namespace Netherlands3D.SelectionTools
             UpdateLine();
         }
 
-        private void MoveAllHandlesToPoint()
+        protected virtual void MoveAllHandlesToPoint()
         {
             foreach (var handle in handles)
             {
@@ -570,7 +570,7 @@ namespace Netherlands3D.SelectionTools
         /// <summary>
         /// Apply positions to LineRenderer positions
         /// </summary>
-        private void UpdateLine()
+        protected virtual void UpdateLine()
         {
             polygonLineRenderer.positionCount = positions.Count;
             polygonLineRenderer.SetPositions(positions.ToArray());
@@ -579,22 +579,23 @@ namespace Netherlands3D.SelectionTools
             if (positions.Count > 1)
             {
                 previewLineHasChanged.Invoke(positions);
+
             }
         }
 
-        private void StartClick()
+        protected virtual void StartClick()
         {
             var currentPointerPosition = pointerAction.ReadValue<Vector2>();
             selectionStartPosition = Camera.main.GetCoordinateInWorld(currentPointerPosition, worldPlane, maxSelectionDistanceFromCamera);
         }
 
-        private void Release()
+        protected virtual void Release()
         {
             var currentPointerPosition = pointerAction.ReadValue<Vector2>();
             var selectionEndPosition = Camera.main.GetCoordinateInWorld(currentPointerPosition, worldPlane, maxSelectionDistanceFromCamera);
         }
 
-        private void FinishPolygon(bool invokeNewPolygonEvent)
+        protected virtual void FinishPolygon(bool invokeNewPolygonEvent)
         {
             polygonLineRenderer.startColor = polygonLineRenderer.endColor = closedLoopLineColor;
 
@@ -615,10 +616,11 @@ namespace Netherlands3D.SelectionTools
                 MoveAllHandlesToPoint();
             }
 
+            var positionsCopy = new List<Vector3>(positions);
             if (!polygonFinished && invokeNewPolygonEvent && positions.Count > 1)
-                createdNewPolygonArea.Invoke(positions);
+                createdNewPolygonArea.Invoke(positionsCopy);
             else if (positions.Count > 1)
-                editedPolygonArea.Invoke(positions);
+                editedPolygonArea.Invoke(positionsCopy);
 
             polygonFinished = true;
         }

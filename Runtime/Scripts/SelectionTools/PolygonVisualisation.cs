@@ -81,7 +81,6 @@ namespace Netherlands3D.SelectionTools
         /// <param name="polygon"></param>
         public void Initialize(List<List<Vector3>> sourcePolygons, float extrusionHeight, bool addBottom, bool createInwardMesh, Material lineMaterial, Color lineColor, Vector2 uvCoordinate = new Vector2())
         {
-            polygons = sourcePolygons;
             this.extrusionHeight = extrusionHeight;
             this.addBottom = addBottom;
             this.createInwardMesh = createInwardMesh;
