@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
@@ -9,6 +10,7 @@ namespace Netherlands3D.SelectionTools
     {
         private List<List<Vector3>> polygons;
         public List<List<Vector3>> Polygons => polygons; //todo make read only
+
 
         [Header("Events")]
         public UnityEvent<PolygonVisualisation> reselectVisualisedPolygon = new UnityEvent<PolygonVisualisation>();
@@ -75,6 +77,22 @@ namespace Netherlands3D.SelectionTools
         }
 #endif
 
+
+        private static List<PolygonCreate> polygonQueue = new List<PolygonCreate>();
+        private static int doneForQueueThisFrame = 0;
+        private static int queueFrame = 0;
+        public bool isInQueue = false;
+
+        public struct PolygonCreate
+        {
+            public PolygonVisualisation reference;
+
+            public PolygonCreate(PolygonVisualisation reference)
+            {
+                this.reference = reference;
+            }
+        }
+
         /// <summary>
         /// Sets a reference of the polygon to be visualised
         /// </summary>
@@ -89,25 +107,46 @@ namespace Netherlands3D.SelectionTools
             this.lineMaterial = lineMaterial;
             this.lineColor = lineColor;
 
-            UpdateVisualisation(sourcePolygons);
+            polygonQueue.Add(new PolygonCreate(this));
+            isInQueue = true;
+
+            //UpdateVisualisation(sourcePolygons);
         }
 
-        public void OnPointerClick(PointerEventData eventData)
+        //should be done from its parent controller, but for the sake of testing done like this now
+        private void Update()
         {
-            ReselectPolygon();
+            if (polygonQueue.Count > 0 && polygonQueue[0].reference == this)
+            {
+                doneForQueueThisFrame--;
+            }
+
+            if (polygonQueue.Count > 0 && doneForQueueThisFrame <= 0)
+            {
+                PolygonCreate next = polygonQueue[0];
+                polygonQueue.RemoveAt(0);
+                next.reference.isInQueue = false;
+                UpdateVisualisation(next.reference.polygons);
+                doneForQueueThisFrame = 5;
+            }
+
         }
 
-        public void ReselectPolygon()
-        {
-            reselectVisualisedPolygon.Invoke(this);
-        }
 
         public void UpdateVisualisation(List<Vector3> newPolygon)
         {
-            UpdateVisualisation(new List<List<Vector3>>() { newPolygon });
+            if (isInQueue)
+            {
+                polygonQueue.RemoveAll(p => p.reference == this);
+            }
+            polygons = new List<List<Vector3>>() { newPolygon };
+            polygonQueue.Add(new PolygonCreate(this));
+            isInQueue = true;
+
+            //UpdateVisualisation(new List<List<Vector3>>() { newPolygon });
         }
 
-        public void UpdateVisualisation(List<List<Vector3>> newPolygon)
+        private void UpdateVisualisation(List<List<Vector3>> newPolygon)
         {
             polygons = newPolygon;
 
@@ -136,6 +175,16 @@ namespace Netherlands3D.SelectionTools
 
             EnableMeshRenderers(drawMesh);
             EnableLineRenderers(drawLine);
+        }
+
+        public void OnPointerClick(PointerEventData eventData)
+        {
+            ReselectPolygon();
+        }
+
+        public void ReselectPolygon()
+        {
+            reselectVisualisedPolygon.Invoke(this);
         }
 
         public void UpdateLineRenderers() //todo: reuse existing line renderers if this is possible and if this is significantly more performant
